@@ -1,10 +1,11 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const db = require("./models");
 dotenv.config();
+const app = express();
+db.sequelize.sync();
 
 const PORT = process.env.PORT;
-
-const app = express();
 
 app.get("/", (req, res) => {
   res.send("Hello, express server!");
