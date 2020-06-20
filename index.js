@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const expressSession = require('express-session');
+const passport = require('passport');
 
 const dotenv = require('dotenv');
 const db = require('./models');
@@ -32,6 +33,8 @@ app.use(
 		}
 	})
 );
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/api/user', userAPIRouter);
 app.use('/api/post', postAPIRouter);
