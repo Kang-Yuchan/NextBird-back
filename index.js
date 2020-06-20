@@ -21,7 +21,12 @@ const PORT = process.env.PORT;
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+	cors({
+		origin: 'http://localhost:4000',
+		credentials: true
+	})
+);
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
 	expressSession({
@@ -31,7 +36,8 @@ app.use(
 		cookie: {
 			httpOnly: true, // prevent hacking cookie
 			secure: false // change true when use https
-		}
+		},
+		name: process.env.COOKIE_NAME
 	})
 );
 app.use(passport.initialize());
