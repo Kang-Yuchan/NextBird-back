@@ -50,13 +50,37 @@ router.post('/login', (req, res, next) => {
 		if (info) {
 			return res.status(401).send(info.reason);
 		}
-		return req.login(user, (loginErr) => {
-			if (loginErr) {
-				return next(loginErr);
+		return req.login(user, async (loginErr) => {
+			try {
+				if (loginErr) {
+					return next(loginErr);
+				}
+				const fullUser = await db.User.findOne({
+					where: { id: user.id },
+					include: [
+						{
+							model: db.Post,
+							as: 'Posts',
+							attributes: [ 'id' ]
+						},
+						{
+							model: db.User,
+							as: 'Followings',
+							attributes: [ 'id' ]
+						},
+						{
+							model: db.User,
+							as: 'Followers',
+							attributes: [ 'id' ]
+						}
+					],
+					attributes: [ 'id', 'userId' ]
+				});
+				console.log(fullUser);
+				return res.json(fullUser);
+			} catch (error) {
+				next(error);
 			}
-			const filteredUser = Object.assign({}, user.toJSON());
-			delete filteredUser.password;
-			return res.json(user);
 		});
 	})(req, res, next);
 });
