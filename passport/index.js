@@ -21,3 +21,9 @@ module.exports = () => {
 
 	local();
 };
+
+// frontend send only cookie to backend server
+// backend server search cookie & can find id as express-session
+// That id => deserializeUser
+// user information => req.user
+// every request => go deserialzeUser

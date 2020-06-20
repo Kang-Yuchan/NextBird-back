@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const db = require('../models');
+const passport = require('passport');
 
 const router = express.Router();
 
@@ -32,9 +33,33 @@ router.post('/', async (req, res, next) => {
 
 router.get('/:id', (req, res) => {});
 
-router.post('/logout', (req, res) => {});
+router.post('/logout', (req, res) => {
+	// POST /api/user/logout log out
+	req.logOut();
+	req.session.destroy();
+	res.send('log out success!');
+});
 
-router.post('/login', (req, res) => {});
+router.post('/login', (req, res, next) => {
+	// POST /api/user/login log in
+	passport.authenticate('local', (err, user, info) => {
+		if (err) {
+			console.error(err);
+			return next(err);
+		}
+		if (info) {
+			return res.status(401).send(info.reason);
+		}
+		return req.login(user, (loginErr) => {
+			if (loginErr) {
+				return next(loginErr);
+			}
+			const filteredUser = Object.assign({}, user.toJSON());
+			delete filteredUser.password;
+			return res.json(user);
+		});
+	})(req, res, next);
+});
 
 router.get('/:id/follow', (req, res) => {});
 
