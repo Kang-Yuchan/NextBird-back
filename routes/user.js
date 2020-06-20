@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', (req, res) => {});
 
 router.post('/', async (req, res, next) => {
-	// POST sign up
+	// POST /api/user sign up
 	try {
 		const exUser = await db.User.findOne({
 			where: {
@@ -17,15 +17,15 @@ router.post('/', async (req, res, next) => {
 		if (exUser) {
 			return res.status(403).send('Already use this id');
 		}
-		const hashedPassword = bcrypt.hash(req.body.password, 12); // salt 10 ~ 12
+		const hashedPassword = await bcrypt.hash(req.body.password, 12); // salt 10 ~ 13
 		const newUser = await db.User.create({
-			name: req.body.name,
+			userId: req.body.userId,
 			password: hashedPassword
 		});
 		console.log(newUser);
-		return res.json(newUser);
+		return res.status(200).json(newUser);
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		return next(error);
 	}
 });
@@ -44,6 +44,6 @@ router.delete('/:id/follow', (req, res) => {});
 
 router.delete('/:id/follower', (req, res) => {});
 
-app.get('/:id/posts', (req, res) => {});
+router.get('/:id/posts', (req, res) => {});
 
 module.exports = router;

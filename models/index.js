@@ -11,11 +11,11 @@ Object.keys(db).forEach((modelName) => {
 	}
 });
 
-db.User = require('./user.js')(sequelize, Sequelize);
-db.Post = require('./post.js')(sequelize, Sequelize);
-db.Hashtag = require('./hashtag.js')(sequelize, Sequelize);
-db.Image = require('./image.js')(sequelize, Sequelize);
-db.Comment = require('./comment.js')(sequelize, Sequelize);
+db.User = require('./user')(sequelize, Sequelize);
+db.Post = require('./post')(sequelize, Sequelize);
+db.Hashtag = require('./hashtag')(sequelize, Sequelize);
+db.Image = require('./image')(sequelize, Sequelize);
+db.Comment = require('./comment')(sequelize, Sequelize);
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
