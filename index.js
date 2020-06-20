@@ -11,6 +11,9 @@ db.sequelize.sync();
 
 const PORT = process.env.PORT;
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use('/api/user', userAPIRouter);
 app.use('/api/post', postAPIRouter);
 app.use('/api/posts', postsAPIRouter);
