@@ -10,7 +10,6 @@ router.get('/', (req, res) => {
 		return res.status(401).send('You have to log in.');
 	}
 	const user = Object.assign({}, req.user.toJSON());
-	console.log(user);
 	delete user.password;
 	return res.json(user);
 });
@@ -31,7 +30,6 @@ router.post('/', async (req, res, next) => {
 			userId: req.body.userId,
 			password: hashedPassword
 		});
-		console.log(newUser);
 		return res.status(200).json(newUser);
 	} catch (error) {
 		console.error(error);
