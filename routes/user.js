@@ -5,7 +5,15 @@ const passport = require('passport');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {});
+router.get('/', (req, res) => {
+	if (!req.user) {
+		return res.status(401).send('You have to log in.');
+	}
+	const user = Object.assign({}, req.user.toJSON());
+	console.log(user);
+	delete user.password;
+	return res.json(user);
+});
 
 router.post('/', async (req, res, next) => {
 	// POST /api/user sign up
