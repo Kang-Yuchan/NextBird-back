@@ -64,10 +64,10 @@ router.get('/:id', async (req, res, next) => {
 		jsonUser.Posts = jsonUser.Posts ? jsonUser.Posts.length : 0;
 		jsonUser.Followings = jsonUser.Followings ? jsonUser.Followings.length : 0;
 		jsonUser.Followers = jsonUser.Followers ? jsonUser.Followers.length : 0;
-		res.json(jsonUser);
+		return res.json(jsonUser);
 	} catch (error) {
 		console.error(error);
-		next(error);
+		return next(error);
 	}
 });
 
