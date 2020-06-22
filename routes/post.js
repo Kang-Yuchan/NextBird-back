@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
 				hashtags.map((tag) =>
 					db.Hashtag.findOrCreate({
 						where: {
-							name: tag.slice(1).toLowerCase()
+							content: tag.slice(1).toLowerCase()
 						}
 					})
 				)
