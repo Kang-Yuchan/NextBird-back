@@ -1,5 +1,7 @@
 const express = require('express');
 const db = require('../models');
+const multer = require('multer');
+const path = require('path');
 const router = express.Router();
 
 router.post('/', async (req, res) => {
@@ -33,7 +35,22 @@ router.post('/', async (req, res) => {
 	} catch (error) {}
 });
 
-router.post('/images', (req, res, next) => {});
+const upload = multer({
+	storage: multer.diskStorage({
+		destination(req, file, done) {
+			done(null, 'uploads');
+		},
+		filename(req, file, done) {
+			const ext = path.extname(file.originalname); // ex) .png
+			const basename = path.basename(file.originalname, ext); // ex) kangyuchan
+			done(null, basename + new Date().valueOf() + ext); // ex) kangyuchan1592914971961.png
+		}
+	}),
+	limits: { fileSize: 30 * 1024 * 1024 } // 30MB
+});
+router.post('/images', upload.array('image'), (req, res) => {
+	res.json(req.files.map((v) => v.filename));
+});
 
 router.get('/:id/comments', async (req, res, next) => {
 	try {
@@ -49,7 +66,7 @@ router.get('/:id/comments', async (req, res, next) => {
 			where: {
 				PostId: req.params.id
 			},
-			order: [ [ 'createdAt', 'ASC' ] ],
+			order: [ [ 'createdAt', 'DESC' ] ],
 			include: [
 				{
 					model: db.User,
