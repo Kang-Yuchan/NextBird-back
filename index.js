@@ -20,6 +20,7 @@ passportConfig();
 const PORT = process.env.PORT;
 
 app.use(morgan('dev'));
+app.use('/', express.static('uploads'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
