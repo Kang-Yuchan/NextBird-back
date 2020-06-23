@@ -10,6 +10,9 @@ router.get('/', async (req, res, next) => {
 				{
 					model: db.User,
 					attributes: [ 'id', 'userId' ]
+				},
+				{
+					model: db.Image
 				}
 			],
 			order: [ [ 'createdAt', 'DESC' ] ]

@@ -4,7 +4,21 @@ const multer = require('multer');
 const path = require('path');
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+const upload = multer({
+	storage: multer.diskStorage({
+		destination(req, file, done) {
+			done(null, 'uploads');
+		},
+		filename(req, file, done) {
+			const ext = path.extname(file.originalname); // ex) .png
+			const basename = path.basename(file.originalname, ext); // ex) kangyuchan
+			done(null, basename + new Date().valueOf() + ext); // ex) kangyuchan1592914971961.png
+		}
+	}),
+	limits: { fileSize: 30 * 1024 * 1024 } // 30MB
+});
+
+router.post('/', upload.none(), async (req, res) => {
 	try {
 		const hashtags = req.body.content.match(/#[^\s]+/g);
 		const newPost = await db.Post.create({
@@ -23,11 +37,27 @@ router.post('/', async (req, res) => {
 			);
 			await newPost.addHashtags(result.map((r) => r[0]));
 		}
+		if (req.body.image) {
+			if (Array.isArray(req.body.image)) {
+				const images = await Promise.all(
+					req.body.image.map((image) => {
+						return db.Image.create({ src: image });
+					})
+				);
+				await newPost.addImages(images);
+			} else {
+				const image = await db.Image.create({ src: req.body.image });
+				await newPost.addImage(image);
+			}
+		}
 		const fullPost = await db.Post.findOne({
 			where: { id: newPost.id },
 			include: [
 				{
 					model: db.User
+				},
+				{
+					model: db.Image
 				}
 			]
 		});
@@ -35,19 +65,6 @@ router.post('/', async (req, res) => {
 	} catch (error) {}
 });
 
-const upload = multer({
-	storage: multer.diskStorage({
-		destination(req, file, done) {
-			done(null, 'uploads');
-		},
-		filename(req, file, done) {
-			const ext = path.extname(file.originalname); // ex) .png
-			const basename = path.basename(file.originalname, ext); // ex) kangyuchan
-			done(null, basename + new Date().valueOf() + ext); // ex) kangyuchan1592914971961.png
-		}
-	}),
-	limits: { fileSize: 30 * 1024 * 1024 } // 30MB
-});
 router.post('/images', upload.array('image'), (req, res) => {
 	res.json(req.files.map((v) => v.filename));
 });
