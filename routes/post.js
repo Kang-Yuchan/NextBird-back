@@ -173,4 +173,70 @@ router.delete('/:id/like', async (req, res, next) => {
 	}
 });
 
+router.post('/:id/retweet', async (req, res, next) => {
+	try {
+		if (!req.user) {
+			return res.status(401).send('Please log in.');
+		}
+		const post = await db.Post.findOne({
+			where: {
+				id: req.params.id
+			},
+			include: [
+				{
+					model: db.Post,
+					as: 'Retweet'
+				}
+			]
+		});
+		if (!post) {
+			return res.status(404).send('This post is not exist.');
+		}
+		if (req.user.id === post.UserId || (post.Retweet && post.Retweet.UserId === req.user.id)) {
+			return res.status(403).send("Can't retweet self post. ");
+		}
+		const retweetTargetId = post.RetweetId || post.id;
+		const exPost = await db.Post.findOne({
+			where: {
+				UserId: req.user.id,
+				RetweetId: retweetTargetId
+			}
+		});
+		if (exPost) {
+			return res.status(403).send('You retweet this post already.');
+		}
+		const retweet = await db.Post.create({
+			UserId: req.user.id,
+			RetweetId: retweetTargetId,
+			content: 'retweet'
+		});
+		const retweetWithPrevPost = await db.Post.findOne({
+			where: { id: retweet.id },
+			include: [
+				{
+					model: db.User,
+					attributes: [ 'id', 'userId' ]
+				},
+				{
+					model: db.Post,
+					as: 'Retweet',
+					include: [
+						{
+							model: db.User,
+							attributes: [ 'id', 'userId' ]
+						},
+						{
+							model: db.Image
+						}
+					]
+				}
+			]
+		});
+		return res.json(retweetWithPrevPost);
+	} catch (error) {
+		console.error(error);
+		next(error);
+	}
+});
+
 module.exports = router;
