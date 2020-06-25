@@ -152,6 +152,23 @@ router.post('/:id/like', async (req, res, next) => {
 	}
 });
 
+router.delete('/:id', async (req, res, next) => {
+	try {
+		if (!req.user) {
+			return res.status(401).send('Please log in.');
+		}
+		const post = await db.Post.findOne({ where: { id: req.params.id } });
+		if (!post) {
+			return res.status(404).send('This post is not exist.');
+		}
+		await db.Post.destroy({ where: { id: req.params.id } });
+		res.send(req.params.id);
+	} catch (error) {
+		console.error(error);
+		next(error);
+	}
+});
+
 router.delete('/:id/like', async (req, res, next) => {
 	try {
 		if (!req.user) {
