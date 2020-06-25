@@ -123,7 +123,57 @@ router.post('/login', (req, res, next) => {
 	})(req, res, next);
 });
 
-router.get('/:id/follow', (req, res) => {});
+router.get('/:id/followings', async (req, res, next) => {
+	try {
+		if (!req.user) {
+			return res.status(401).send('You have to log in.');
+		}
+		const user = await db.User.findOne({
+			where: { id: parseInt(req.params.id, 10) }
+		});
+		const followings = await user.getFollowings({
+			attributes: [ 'id', 'userId' ]
+		});
+		return res.json(followings);
+	} catch (error) {
+		console.error(error);
+		next(error);
+	}
+});
+
+router.get('/:id/followers', async (req, res, next) => {
+	try {
+		if (!req.user) {
+			return res.status(401).send('You have to log in.');
+		}
+		const user = await db.User.findOne({
+			where: { id: parseInt(req.params.id, 10) }
+		});
+		const followers = await user.getFollowers({
+			attributes: [ 'id', 'userId' ]
+		});
+		return res.json(followers);
+	} catch (error) {
+		console.error(error);
+		next(error);
+	}
+});
+
+router.delete('/:id/follower', async (req, res, next) => {
+	try {
+		if (!req.user) {
+			return res.status(401).send('You have to log in.');
+		}
+		const me = await db.User.findOne({
+			where: { id: req.user.id }
+		});
+		await me.removeFollowers(req.params.id);
+		return res.send(req.params.id);
+	} catch (error) {
+		console.error(error);
+		next(error);
+	}
+});
 
 router.post('/:id/follow', async (req, res, next) => {
 	try {
@@ -156,8 +206,6 @@ router.delete('/:id/follow', async (req, res, next) => {
 		next(error);
 	}
 });
-
-router.delete('/:id/follower', (req, res) => {});
 
 router.get('/:id/posts', async (req, res, next) => {
 	try {
