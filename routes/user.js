@@ -125,9 +125,37 @@ router.post('/login', (req, res, next) => {
 
 router.get('/:id/follow', (req, res) => {});
 
-router.post('/:id/follow', (req, res) => {});
+router.post('/:id/follow', async (req, res, next) => {
+	try {
+		if (!req.user) {
+			return res.status(401).send('You have to log in.');
+		}
+		const me = await db.User.findOne({
+			where: { id: req.user.id }
+		});
+		await me.addFollowing(req.params.id);
+		return res.send(req.params.id);
+	} catch (error) {
+		console.error(error);
+		next(error);
+	}
+});
 
-router.delete('/:id/follow', (req, res) => {});
+router.delete('/:id/follow', async (req, res, next) => {
+	try {
+		if (!req.user) {
+			return res.status(401).send('You have to log in.');
+		}
+		const me = await db.User.findOne({
+			where: { id: req.user.id }
+		});
+		await me.removeFollowing(req.params.id);
+		return res.send(req.params.id);
+	} catch (error) {
+		console.error(error);
+		next(error);
+	}
+});
 
 router.delete('/:id/follower', (req, res) => {});
 
