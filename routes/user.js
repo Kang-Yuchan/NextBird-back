@@ -237,4 +237,24 @@ router.get('/:id/posts', async (req, res, next) => {
 	}
 });
 
+router.patch('/userId', async (req, res, next) => {
+	try {
+		if (!req.user) {
+			return res.status(401).send('You have to log in.');
+		}
+		await db.User.update(
+			{
+				userId: req.body.userId
+			},
+			{
+				where: { id: req.user.id }
+			}
+		);
+		return res.json(req.body.userId);
+	} catch (error) {
+		console.error(error);
+		next(error);
+	}
+});
+
 module.exports = router;
