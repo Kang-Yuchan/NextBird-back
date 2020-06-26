@@ -40,7 +40,7 @@ router.post('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
 	try {
 		const user = await db.User.findOne({
-			where: { id: parseInt(req.params.id, 10) },
+			where: { id: parseInt(req.params.id, 10) || (req.user && req.user.id) || 0 },
 			include: [
 				{
 					model: db.Post,
@@ -129,7 +129,7 @@ router.get('/:id/followings', async (req, res, next) => {
 			return res.status(401).send('You have to log in.');
 		}
 		const user = await db.User.findOne({
-			where: { id: parseInt(req.params.id, 10) }
+			where: { id: parseInt(req.params.id, 10) || (req.user && req.user.id) || 0 }
 		});
 		const followings = await user.getFollowings({
 			attributes: [ 'id', 'userId' ]
@@ -147,7 +147,7 @@ router.get('/:id/followers', async (req, res, next) => {
 			return res.status(401).send('You have to log in.');
 		}
 		const user = await db.User.findOne({
-			where: { id: parseInt(req.params.id, 10) }
+			where: { id: parseInt(req.params.id, 10) || (req.user && req.user.id) || 0 }
 		});
 		const followers = await user.getFollowers({
 			attributes: [ 'id', 'userId' ]
