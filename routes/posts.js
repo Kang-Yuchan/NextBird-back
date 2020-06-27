@@ -14,6 +14,7 @@ router.get('/', async (req, res, next) => {
 			};
 		}
 		const posts = await db.Post.findAll({
+			where,
 			include: [
 				{
 					model: db.User,
