@@ -18,6 +18,27 @@ const upload = multer({
 	limits: { fileSize: 30 * 1024 * 1024 } // 30MB
 });
 
+router.get('/:id', async (req, res, next) => {
+	try {
+		const post = await db.Post.findOne({
+			where: { id: req.params.id },
+			include: [
+				{
+					model: db.User,
+					attributes: [ 'id', 'userId' ]
+				},
+				{
+					model: db.Image
+				}
+			]
+		});
+		return res.json(post);
+	} catch (error) {
+		console.error(error);
+		next(error);
+	}
+});
+
 router.post('/', upload.none(), async (req, res) => {
 	try {
 		const hashtags = req.body.content.match(/#[^\s]+/g);
