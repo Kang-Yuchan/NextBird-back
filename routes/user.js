@@ -132,7 +132,9 @@ router.get('/:id/followings', async (req, res, next) => {
 			where: { id: parseInt(req.params.id, 10) || (req.user && req.user.id) || 0 }
 		});
 		const followings = await user.getFollowings({
-			attributes: [ 'id', 'userId' ]
+			attributes: [ 'id', 'userId' ],
+			limit: parseInt(req.query.limit, 10),
+			offset: parseInt(req.query.offset, 10)
 		});
 		return res.json(followings);
 	} catch (error) {
@@ -150,7 +152,9 @@ router.get('/:id/followers', async (req, res, next) => {
 			where: { id: parseInt(req.params.id, 10) || (req.user && req.user.id) || 0 }
 		});
 		const followers = await user.getFollowers({
-			attributes: [ 'id', 'userId' ]
+			attributes: [ 'id', 'userId' ],
+			limit: parseInt(req.query.limit, 10),
+			offset: parseInt(req.query.offset, 10)
 		});
 		return res.json(followers);
 	} catch (error) {
