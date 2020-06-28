@@ -43,6 +43,11 @@ app.use(
 		name: process.env.COOKIE_NAME
 	})
 );
+
+app.get('/', (req, res) => {
+	res.send('NextBird API Server is Listening!');
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 
