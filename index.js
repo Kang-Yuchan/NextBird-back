@@ -1,6 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const hpp = require('hpp');
+const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const expressSession = require('express-session');
 const passport = require('passport');
@@ -20,7 +22,26 @@ passportConfig();
 const PORT = process.env.PORT;
 const prod = process.env.NODE_ENV === 'production';
 
-app.use(morgan('dev'));
+if (prod) {
+	app.use(hpp());
+	app.use(helmet());
+	app.use(morgan('combined'));
+	app.use(
+		cors({
+			origin: /nextbird\.site$/,
+			credentials: true
+		})
+	);
+} else {
+	app.use(morgan('dev'));
+	app.use(
+		cors({
+			origin: true,
+			credentials: true
+		})
+	);
+}
+
 app.use('/', express.static('uploads'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -38,7 +59,8 @@ app.use(
 		secret: process.env.COOKIE_SECRET,
 		cookie: {
 			httpOnly: true, // prevent hacking cookie
-			secure: false // change true when use https
+			secure: false, // change true when use https
+			domain: prod && '.nextbird.site'
 		},
 		name: process.env.COOKIE_NAME
 	})
