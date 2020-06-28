@@ -18,6 +18,7 @@ db.sequelize.sync();
 passportConfig();
 
 const PORT = process.env.PORT;
+const prod = process.env.NODE_ENV === 'production';
 
 app.use(morgan('dev'));
 app.use('/', express.static('uploads'));
@@ -50,6 +51,6 @@ app.use('/api/post', postAPIRouter);
 app.use('/api/posts', postsAPIRouter);
 app.use('/api/hashtag', hashtagAPIRouter);
 
-app.listen(PORT, () => {
-	console.log(PORT ? `Listening server: localhost:${PORT} 👌` : 'Your server is dead... 💀');
+app.listen(prod ? PORT : 3065, () => {
+	console.log(prod ? `Listening server: localhost:${PORT} 👌` : `Listening server: localhost:3065 👌`);
 });
