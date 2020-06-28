@@ -2,17 +2,24 @@ const express = require('express');
 const db = require('../models');
 const multer = require('multer');
 const path = require('path');
+const AWS = require('aws-sdk');
+const multerS3 = require('multer-s3');
+const dotenv = require('dotenv');
+dotenv.config();
 const router = express.Router();
 
+AWS.config.update({
+	region: 'ap-northeast-1',
+	accessKeyId: process.env.ACCESS_KEY,
+	secretAccessKey: process.env.SECRET_ACCESS_KEY
+});
+
 const upload = multer({
-	storage: multer.diskStorage({
-		destination(req, file, done) {
-			done(null, 'uploads');
-		},
-		filename(req, file, done) {
-			const ext = path.extname(file.originalname); // ex) .png
-			const basename = path.basename(file.originalname, ext); // ex) kangyuchan
-			done(null, basename + new Date().valueOf() + ext); // ex) kangyuchan1592914971961.png
+	storage: multerS3({
+		s3: new AWS.S3(),
+		bucket: 'nextbird',
+		key(req, file, cb) {
+			cb(null, `original/${+new Date()}${path.basename(file.originalname)}`);
 		}
 	}),
 	limits: { fileSize: 30 * 1024 * 1024 } // 30MB
@@ -87,7 +94,7 @@ router.post('/', upload.none(), async (req, res) => {
 });
 
 router.post('/images', upload.array('image'), (req, res) => {
-	res.json(req.files.map((v) => v.filename));
+	res.json(req.files.map((v) => v.location));
 });
 
 router.get('/:id/comments', async (req, res, next) => {
