@@ -23,6 +23,18 @@
 - Passport(Authentication for Node.js): http://www.passportjs.org/
 - AWS S3(Storage for images upload): https://aws.amazon.com/jp/s3/
 
+## Frontend
+
+**CONNECT TO FRONTEND SERVER IN AWS EC, ROUTES53**
+
+* NextBird-front: https://github.com/Kang-Yuchan/NextBird-front
+
+## AWS Lambda
+
+**USING AWS LAMBDA FOR RESIZING IMAGE IN SERVERLESS**
+
+* NextBird-lambda: https://github.com/Kang-Yuchan/NextBird-lambda
+
 ## Install
 
 ```sh
