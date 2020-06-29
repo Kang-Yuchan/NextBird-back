@@ -25,7 +25,7 @@
 
 ## Frontend
 
-**CONNECT TO FRONTEND SERVER IN AWS EC, ROUTES53**
+**CONNECT TO FRONTEND SERVER IN AWS EC2, ROUTES53**
 
 * NextBird-front: https://github.com/Kang-Yuchan/NextBird-front
 
