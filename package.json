@@ -9,7 +9,7 @@
 	"author": "Kang-Yuchan",
 	"license": "MIT",
 	"dependencies": {
-		"aws-sdk": "^2.706.0",
+		"aws-sdk": "^2.814.0",
 		"axios": "^0.19.2",
 		"bcrypt": "^5.0.0",
 		"cli": "^1.0.1",
